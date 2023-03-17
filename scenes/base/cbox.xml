@@ -1,4 +1,5 @@
 <scene version="3.0.0">
+    <path value="../data"/>
     <default name="spp" value="128"/>
     <default name="res" value="256"/>
     <default name="max_depth" value="6"/>
