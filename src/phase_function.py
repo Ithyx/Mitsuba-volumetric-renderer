@@ -4,5 +4,6 @@ import mitsuba as mi
 
 class SunBeamPhaseFunction(mi.PhaseFunction):
     # TODO
-    def __init__(self: mi.PhaseFunction, props: mi.Properties) -> None:
-        mi.PhaseFunction.__init__(props)
+    def __init__(self: mi.PhaseFunction) -> None:
+        props = mi.Properties()
+        mi.PhaseFunction.__init__(self, props)

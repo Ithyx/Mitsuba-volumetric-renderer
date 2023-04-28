@@ -1,10 +1,13 @@
+# autopep8: off
 import mitsuba as mi
+mi.set_variant("llvm_ad_rgb")
 
 from primitive import SunBeamPrimitive
 
+# autopep8: on
+
 
 def main():
-    mi.set_variant("llvm_ad_rgb")
     mi.register_medium("sunbeam", lambda props: SunBeamPrimitive(props))
 
     scene = mi.load_file("scenes/modified/cbox.xml")

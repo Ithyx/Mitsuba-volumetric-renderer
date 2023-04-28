@@ -7,11 +7,12 @@ from phase_function import SunBeamPhaseFunction
 
 class SunBeamPrimitive(mi.Medium):
     def __init__(self: mi.Medium, props: mi.Properties) -> None:
-        mi.Medium.__init__(props)
+        mi.Medium.__init__(self, props)
 
     def eval_tr_and_pdf(self: mi.Medium, mi, si, active: bool) -> Tuple[mi.Color3f, mi.Color3f]:
         # TODO
-        return ((0.0, 0.0, 0.0), (0.0, 0.0, 0.0))
+        black = mi.Color3f(0.0, 0.0, 0.0)
+        return (black, black)
 
     def is_homogeneous(self: mi.Medium) -> bool:
         return False

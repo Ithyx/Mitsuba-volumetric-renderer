@@ -69,8 +69,8 @@
 
     <!-- God Rays Volumes -->
 
-    <shape type="beam_volume" id="god_ray_volume">
-        <ref id="light">
+    <shape type="sunbeam" id="god_ray_volume">
+        <ref id="light"/>
     </shape>
 
     <!-- Shapes -->
