@@ -2,13 +2,13 @@
 import mitsuba as mi
 mi.set_variant("llvm_ad_rgb")
 
-from primitive import SunBeamPrimitive
+from integrator import GodraysIntegrator
 
 # autopep8: on
 
 
 def main():
-    mi.register_medium("sunbeam", lambda props: SunBeamPrimitive(props))
+    mi.register_integrator("godrays", lambda props: GodraysIntegrator(props))
 
     scene = mi.load_file("scenes/modified/cbox.xml")
     image = mi.render(scene, spp=256)
