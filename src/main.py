@@ -18,7 +18,7 @@ def main():
     image = mi.render(scene, spp=128)
 
     plt.axis('off')
-    plt.imshow(image ** (1.0 / 2.2))
+    plt.imshow(image)
     plt.show()
 
 
