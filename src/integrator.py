@@ -37,7 +37,7 @@ class GodraysIntegrator(mi.SamplingIntegrator):
                 scatter_its = cast(mi.SurfaceInteraction3f, scene.ray_intersect(scatter_ray))
 
                 # TODO: check for occlusion
-                # TODO: make sure thos works for light inside the volume
+                # TODO: make sure this works for light inside the volume
 
                 # Calcul de la transmittance à partir de la densité (homogène)
                 # https://www.pbr-book.org/3ed-2018/Light_Transport_II_Volume_Rendering/Sampling_Volume_Scattering#HomogeneousMedium
