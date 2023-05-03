@@ -14,7 +14,7 @@ def main():
     params = {}
     params["integrator"] = "godrays"
 
-    scene = mi.load_file("scenes/modified/simple.xml", **params)
+    scene = mi.load_file("scenes/modified/simple_light.xml", **params)
     image = mi.render(scene, spp=128)
 
     plt.axis('off')
