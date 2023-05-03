@@ -5,8 +5,9 @@
     <default name="integrator" value="volpath"/>
     
     <integrator type='$integrator'>
-        <integer name="step_count" value="20"/>
         <ref name="input_light" id="light1"/>
+        <integer name="step_count" value="20"/>
+        <integer name="density" value="0.7"/>
     </integrator>
 
     <sensor type="perspective" id="sensor">
