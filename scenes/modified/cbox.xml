@@ -5,9 +5,7 @@
     <default name="max_depth" value="2"/>
     <default name="integrator" value="godrays"/>
 
-    <integrator type='$integrator'>
-        <integer name="max_depth" value="$max_depth"/>
-    </integrator>
+    <integrator type='$integrator'/>
 
     <sensor type="perspective" id="sensor">
         <string name="fov_axis" value="smaller"/>
