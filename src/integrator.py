@@ -3,24 +3,26 @@ from typing import cast, Optional
 import drjit as dr
 import mitsuba as mi
 
+from config import cprint
+
 class GodraysIntegrator(mi.SamplingIntegrator):
     def __init__(self, props: mi.Properties) -> None:
         super().__init__(props)
-        print("Integator parameters:")
+        cprint("Integator parameters:")
 
         self.light_data = cast(mi.Emitter, props.get('input_light'))
         self.input_light_pos = cast(mi.Point3f, self.light_data.bbox().center())
         self.step_count = cast(int, props.get('step_count', 20))
         self.density = cast(float, props.get('density', 1.0))
 
-        print(f"\tInput light position: {self.input_light_pos}")
-        print(f"\tStep count: {self.step_count}")
-        print(f"\tMedium density: {self.density}")
+        cprint(f"\tInput light position: {self.input_light_pos}")
+        cprint(f"\tStep count: {self.step_count}")
+        cprint(f"\tMedium density: {self.density}")
 
     def sample(self, scene: mi.Scene, sampler: mi.Sampler, ray: mi.RayDifferential3f, medium: Optional[mi.Medium] = None, active: bool = True ) -> tuple[mi.Color3f, bool, list[float]]:
-        print("==========================")
-        print("      Sampling begin      ")
-        print("                          ")
+        cprint("==========================")
+        cprint("      Sampling begin      ")
+        cprint("                          ")
         color = dr.zeros(mi.Color3f)
 
         # Intersection initiale
@@ -37,16 +39,16 @@ class GodraysIntegrator(mi.SamplingIntegrator):
 
             light_accumulator = dr.zeros(mi.Color3f)
             for step_it in range(0, self.step_count + 1):
-                print(f"Iteration {step_it + 1}, t = {step_distance * step_it} (max_t = {distance})")
+                cprint(f"Iteration {step_it + 1}, t = {step_distance * step_it} (max_t = {distance})")
                 # Génération d'un rayon vers la lumière sélectionnée à partir du step
                 scatter_origin = ray2(step_distance * step_it)
                 scatter_dir = self.input_light_pos - scatter_origin # type: ignore (Is this really doing what I think it is?)
                 scatter_ray = mi.Ray3f(scatter_origin, scatter_dir)
                 scatter_its = cast(mi.SurfaceInteraction3f, scene.ray_intersect(scatter_ray))
 
-                print(f"\tScatter ray origin: {scatter_origin}")
-                print(f"\tScatter ray direction: {scatter_dir}")
-                print(f"\tScatter ray distance to next hit: {scatter_its.t}")
+                cprint(f"\tScatter ray origin: {scatter_origin}")
+                cprint(f"\tScatter ray direction: {scatter_dir}")
+                cprint(f"\tScatter ray distance to next hit: {scatter_its.t}")
 
                 # TODO: check for occlusion
                 # TODO: make sure this works for light inside the volume
