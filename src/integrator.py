@@ -1,8 +1,8 @@
 from typing import cast, Optional
 
 import mitsuba as mi
-
 import drjit as dr
+import numpy as np
 
 from config import cprint
 
@@ -12,10 +12,12 @@ class GodraysIntegrator(mi.SamplingIntegrator):
         super().__init__(props)
         cprint("Integator parameters:")
 
-        self.light_data = cast(mi.Emitter, props.get('input_light'))
-        self.input_light_pos = cast(mi.Point3f, self.light_data.bbox().center())
+        light_data = cast(mi.Emitter, props.get('input_light'))
+
+        self.input_light_pos = cast(mi.Point3f, light_data.bbox().center())
         self.step_count = cast(int, props.get('step_count', 20))
         self.density = cast(float, props.get('density', 1.0))
+        self.background_color = mi.Color3f(cast(mi.Vector3f, props.get('background_color')))
 
         cprint(f"\tInput light position: {self.input_light_pos}")
         cprint(f"\tStep count: {self.step_count}")
@@ -40,34 +42,35 @@ class GodraysIntegrator(mi.SamplingIntegrator):
             step_distance = distance / self.step_count
 
             light_accumulator = dr.zeros(mi.Color3f)
-            transmission = 1.0
-            for step_it in range(0, self.step_count + 1):
-                cprint(f"Iteration {step_it + 1}, t = {step_distance * step_it} (max_t = {distance})")
+            transmission = dr.ones(mi.Float)
+            for step_it in range(0, self.step_count):
+                cprint(f"Iteration {step_it + 1}")
                 # Génération d'un rayon vers la lumière sélectionnée à partir du step
                 scatter_origin = ray2(step_distance * step_it)
                 scatter_dir = self.input_light_pos - scatter_origin # type: ignore (Is this really doing what I think it is?)
                 scatter_ray = mi.Ray3f(scatter_origin, scatter_dir)
                 scatter_its = cast(mi.SurfaceInteraction3f, scene.ray_intersect(scatter_ray))
 
-                # cprint(f"\tScatter ray origin: {scatter_origin}")
-                # cprint(f"\tScatter ray direction: {scatter_dir}")
-                # cprint(f"\tScatter ray distance to next hit: {scatter_its.t}")
-
-                # TODO: check for occlusion
-                # TODO: make sure this works for light inside the volume
-
                 # Calcul de la transmittance à partir de la densité (homogène)
                 # https://www.pbr-book.org/3ed-2018/Light_Transport_II_Volume_Rendering/Sampling_Volume_Scattering#HomogeneousMedium
                 scatter_transmittance = dr.exp(-(self.density * scatter_its.t)) * step_distance
 
-                cprint(f"scatter transmittance: {scatter_transmittance}")
+                has_inner_occlusion = (
+                    scatter_its.shape != its.shape              # We haven't reached the end of the volume
+                    and scatter_its.p != self.input_light_pos   # We haven't reached the point light (which could be inside the volume)
+                )
+                # Occlusion INSIDE the volume
+                scatter_transmittance[has_inner_occlusion] = 0.0
                 
                 # TODO: composite samples
                 # forward ray marching (as described in (https://www.scratchapixel.com/lessons/3d-basic-rendering/volume-rendering-for-developers/ray-marching-algorithm.html)
-                sample_transmission = dr.exp(-(step_distance * self.density))
+                sample_transmission = cast(float, dr.exp(-(step_distance * self.density)))
                 transmission *= sample_transmission
                 light_accumulator += scatter_transmittance * transmission
 
-            color[its.is_valid()] = light_accumulator
+            background_color = dr.zeros(mi.Color3f)
+            background_color += self.background_color
+            color = (background_color * transmission) + light_accumulator
+            cprint(f"transmission: {transmission}")
 
         return (color, True, [])
