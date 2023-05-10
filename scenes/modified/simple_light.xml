@@ -7,7 +7,7 @@
     <integrator type='$integrator'>
         <ref name="input_light" id="light1"/>
         <integer name="step_count" value="20"/>
-        <float name="density" value="20"/>
+        <float name="density" value="5"/>
     </integrator>
 
     <sensor type="perspective" id="sensor">

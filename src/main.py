@@ -1,13 +1,12 @@
-import config
+import mitsuba as mi
+
+mi.set_variant("llvm_ad_rgb")
+# mi.set_variant("scalar_rgb")
+
 import matplotlib.pyplot as plt
 
-# autopep8: off
-import mitsuba as mi
-print(f"Using variant {config.mitsuba_variant}")
-mi.set_variant(config.mitsuba_variant)
-
 from integrator import GodraysIntegrator
-# autopep8: on
+
 
 def main():
     mi.register_integrator("godrays", lambda props: GodraysIntegrator(props))

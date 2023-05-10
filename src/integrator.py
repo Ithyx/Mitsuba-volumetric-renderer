@@ -1,9 +1,11 @@
 from typing import cast, Optional
 
-import drjit as dr
 import mitsuba as mi
 
+import drjit as dr
+
 from config import cprint
+
 
 class GodraysIntegrator(mi.SamplingIntegrator):
     def __init__(self, props: mi.Properties) -> None:
@@ -38,6 +40,7 @@ class GodraysIntegrator(mi.SamplingIntegrator):
             step_distance = distance / self.step_count
 
             light_accumulator = dr.zeros(mi.Color3f)
+            transmission = 1.0
             for step_it in range(0, self.step_count + 1):
                 cprint(f"Iteration {step_it + 1}, t = {step_distance * step_it} (max_t = {distance})")
                 # Génération d'un rayon vers la lumière sélectionnée à partir du step
@@ -46,19 +49,24 @@ class GodraysIntegrator(mi.SamplingIntegrator):
                 scatter_ray = mi.Ray3f(scatter_origin, scatter_dir)
                 scatter_its = cast(mi.SurfaceInteraction3f, scene.ray_intersect(scatter_ray))
 
-                cprint(f"\tScatter ray origin: {scatter_origin}")
-                cprint(f"\tScatter ray direction: {scatter_dir}")
-                cprint(f"\tScatter ray distance to next hit: {scatter_its.t}")
+                # cprint(f"\tScatter ray origin: {scatter_origin}")
+                # cprint(f"\tScatter ray direction: {scatter_dir}")
+                # cprint(f"\tScatter ray distance to next hit: {scatter_its.t}")
 
                 # TODO: check for occlusion
                 # TODO: make sure this works for light inside the volume
 
                 # Calcul de la transmittance à partir de la densité (homogène)
                 # https://www.pbr-book.org/3ed-2018/Light_Transport_II_Volume_Rendering/Sampling_Volume_Scattering#HomogeneousMedium
-                scatter_transmittance = dr.exp(-(self.density * scatter_its.t))
-                step_transmittance = dr.exp(-(self.density * step_distance * step_it))
+                scatter_transmittance = dr.exp(-(self.density * scatter_its.t)) * step_distance
+
+                cprint(f"scatter transmittance: {scatter_transmittance}")
                 
-                light_accumulator += scatter_transmittance * step_transmittance
+                # TODO: composite samples
+                # forward ray marching (as described in (https://www.scratchapixel.com/lessons/3d-basic-rendering/volume-rendering-for-developers/ray-marching-algorithm.html)
+                sample_transmission = dr.exp(-(step_distance * self.density))
+                transmission *= sample_transmission
+                light_accumulator += scatter_transmittance * transmission
 
             color[its.is_valid()] = light_accumulator
 
