@@ -28,6 +28,7 @@ class GodraysIntegrator(mi.SamplingIntegrator):
         cprint("      Sampling begin      ")
         cprint("                          ")
         color = dr.zeros(mi.Color3f)
+        color = self.background_color
 
         # Intersection initiale
         its = cast(mi.SurfaceInteraction3f, scene.ray_intersect(ray))
@@ -70,7 +71,7 @@ class GodraysIntegrator(mi.SamplingIntegrator):
 
             background_color = dr.zeros(mi.Color3f)
             background_color += self.background_color
-            color = (background_color * transmission) + light_accumulator
+            color[its.is_valid()] = (background_color * transmission) + light_accumulator
             cprint(f"transmission: {transmission}")
 
         return (color, True, [])

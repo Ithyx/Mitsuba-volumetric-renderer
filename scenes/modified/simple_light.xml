@@ -7,7 +7,7 @@
     <integrator type='$integrator'>
         <ref name="input_light" id="light1"/>
         <integer name="step_count" value="1"/>
-        <float name="density" value="5"/>
+        <float name="density" value="1"/>
         <vector name="background_color" value="0.1, 0.2, 0.8"/>
     </integrator>
 
