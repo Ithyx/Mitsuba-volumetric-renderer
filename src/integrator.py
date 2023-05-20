@@ -53,7 +53,6 @@ class GodraysIntegrator(mi.SamplingIntegrator):
                 scatter_its = cast(mi.SurfaceInteraction3f, scene.ray_intersect(scatter_ray))
 
                 # Calcul de la transmittance à partir de la densité (homogène)
-                # https://www.pbr-book.org/3ed-2018/Light_Transport_II_Volume_Rendering/Sampling_Volume_Scattering#HomogeneousMedium
                 scatter_transmittance = dr.exp(-(self.density * scatter_its.t)) * step_distance
 
                 has_inner_occlusion = (
@@ -63,8 +62,7 @@ class GodraysIntegrator(mi.SamplingIntegrator):
                 # Occlusion INSIDE the volume
                 scatter_transmittance[has_inner_occlusion] = 0.0
                 
-                # TODO: composite samples
-                # forward ray marching (as described in (https://www.scratchapixel.com/lessons/3d-basic-rendering/volume-rendering-for-developers/ray-marching-algorithm.html)
+                # Composite samples
                 sample_transmission = cast(float, dr.exp(-(step_distance * self.density)))
                 transmission *= sample_transmission
                 light_accumulator += scatter_transmittance * transmission

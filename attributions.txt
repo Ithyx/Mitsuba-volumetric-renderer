@@ -1,0 +1,2 @@
+Le code présent dans l'archive `mitsuba3-distance.zip` proviens d'Adrien Gruson et à constitué la base de l'intégrateur personalisé final crée pour ce projet. Le reste du code est crée par moi, à l'aide des sources mentionné dans le rapport.
+
