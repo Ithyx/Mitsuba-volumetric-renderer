@@ -11,7 +11,7 @@ Here is a sample output it can produce:
 * A matplotlib display backend (most likely tk)
 
 ### Running the program
-* python -m venv .venv
-* source .venv/bin/active
-* python -m pip install -r requirements.txt
-* python src/main.py
+* `python -m venv .venv`
+* `source .venv/bin/active`
+* `python -m pip install -r requirements.txt`
+* `python src/main.py`
